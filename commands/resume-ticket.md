@@ -35,19 +35,21 @@ Then stop.
 
 ### 3. Find Project Configuration
 
-First, check if we're in a worktree and find the main repo:
+First, find the main repo path (this works correctly in worktrees):
 
 ```bash
-# Get the main repo path (works in worktrees)
-MAIN_REPO=$(git rev-parse --path-format=absolute --git-common-dir | sed 's/\/.git$//')
+git rev-parse --path-format=absolute --git-common-dir
 ```
 
-Then load the project config:
+Take the output (e.g., `/Users/yvocilon/Repos/note-taker/.git`) and remove the `/.git` suffix to get the main repo path.
+
+Then encode the path by replacing all `/` with `%2F` and read the config:
 
 ```bash
-CONFIG_FILE=~/.claude/projects/$(echo "$MAIN_REPO" | sed 's/\//%2F/g')/.aintentfirst.json
-cat "$CONFIG_FILE" 2>/dev/null
+cat ~/.claude/projects/<ENCODED_MAIN_REPO_PATH>/.aintentfirst.json
 ```
+
+The file contains `projectId`, `projectName`, and `connectedAt`.
 
 If no config exists, tell the user to run `/init` in the main repository.
 
@@ -101,14 +103,17 @@ Constraints:
 - <any important constraints from the clarification thread>
 ```
 
-### 7. Ready to Implement
+### 7. Enter Plan Mode
 
-You now have full context. Start by:
-1. Exploring the codebase to understand the relevant areas
-2. Planning the implementation approach
-3. Implementing the feature
+You now have full context for the ticket. Immediately enter plan mode using the EnterPlanMode tool to design the implementation approach.
 
-Don't wait for the user to give you more instructions - you have everything you need. Start implementing.
+In plan mode:
+1. Explore the codebase to understand relevant areas
+2. Identify which files need to be created or modified
+3. Design the implementation approach
+4. Write a clear plan for user approval
+
+Do NOT wait for user instructions - you have everything you need. Enter plan mode and start planning immediately.
 
 ## Example Output
 
@@ -130,11 +135,12 @@ Constraints:
 - No conflict resolution needed for simultaneous edits
 - Polling interval of a few seconds is acceptable
 
-Ready to implement. Let me start by exploring the dashboard code...
+Entering plan mode to design the implementation...
 ```
 
 ## Notes
 
-- This command is auto-run when `/pick-ticket` opens a new terminal tab
+- Use this command when starting a new Claude session in a ticket worktree
 - The short ID (8 chars) is matched against full UUIDs via `startsWith`
 - Project config is found by looking at the main repo path, not the worktree
+- After loading context, Claude automatically enters plan mode

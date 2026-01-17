@@ -41,10 +41,18 @@ Replace `<TOKEN>` with the user's token. This configures the MCP for the local p
 
 ### 3. Check Existing Project Mapping
 
-Check if this repo is already connected to a project:
+Check if this repo is already connected to a project. First get the current directory:
 
 ```bash
-cat ~/.claude/projects/$(echo "$PWD" | sed 's/\//%2F/g')/.aintentfirst.json 2>/dev/null
+pwd
+```
+
+Take the output (e.g., `/Users/yvocilon/Repos/note-taker`) and replace all `/` with `%2F` to get the encoded path.
+
+Then check for existing config:
+
+```bash
+cat ~/.claude/projects/<ENCODED_PATH>/.aintentfirst.json 2>/dev/null
 ```
 
 If a mapping exists, show the current connection and ask if they want to change it.
@@ -67,11 +75,10 @@ If there's only one project, suggest it as the default.
 
 ### 6. Save Project Mapping
 
-Create the config directory and save the mapping:
+Create the config directory using the encoded path from step 3:
 
 ```bash
-CONFIG_DIR=~/.claude/projects/$(echo "$PWD" | sed 's/\//%2F/g')
-mkdir -p "$CONFIG_DIR"
+mkdir -p ~/.claude/projects/<ENCODED_PATH>
 ```
 
 Then write the JSON file with this structure:
@@ -84,7 +91,7 @@ Then write the JSON file with this structure:
 }
 ```
 
-Save to: `$CONFIG_DIR/.aintentfirst.json`
+Save to: `~/.claude/projects/<ENCODED_PATH>/.aintentfirst.json`
 
 ### 7. Check for Existing Project Docs
 

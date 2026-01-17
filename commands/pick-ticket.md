@@ -1,23 +1,32 @@
 ---
-description: Pick a todo ticket, create a worktree, and open a new Claude instance
+description: Pick a todo ticket, create a worktree, and start working in plan mode
 ---
 
 # /pick-ticket - Pick Up a Todo Ticket
 
-Fetch a todo ticket from AI Intent First, create a git worktree, and open a new Claude instance.
+Fetch a todo ticket from AI Intent First, create a git worktree, and enter plan mode to start implementing.
 
 ## Steps
 
 ### 1. Load Project Configuration
 
-Get the project mapping for the current repository:
+Get the project mapping for the current repository. First, get the current directory and encode it:
 
 ```bash
-CONFIG_FILE=~/.claude/projects/$(echo "$PWD" | sed 's/\//%2F/g')/.aintentfirst.json
-cat "$CONFIG_FILE" 2>/dev/null
+pwd
 ```
 
-If no config exists, tell the user:
+Take the output (e.g., `/Users/yvocilon/Repos/note-taker`) and replace all `/` with `%2F` to get the encoded path (e.g., `%2FUsers%2Fyvocilon%2FRepos%2Fnote-taker`).
+
+Then read the config file:
+
+```bash
+cat ~/.claude/projects/<ENCODED_PATH>/.aintentfirst.json
+```
+
+The file contains `projectId`, `projectName`, and `connectedAt`.
+
+If the file doesn't exist, tell the user:
 
 > This repository isn't connected to an AI Intent First project.
 > Run `/init` first to set up the connection.
@@ -86,36 +95,55 @@ The script will:
 
 Capture the `WORKTREE_PATH` from the script output.
 
-### 6. Open New Terminal Tab
+### 6. Change to Worktree Directory
 
-Run the open-worktree script:
+Change your working directory to the worktree:
 
 ```bash
-~/.claude/plugins/repos/aintentfirst/scripts/open-worktree.sh "<worktree-path>"
+cd <worktree-path>
 ```
 
-This opens a new terminal tab (iTerm2 or Terminal.app) and runs:
-```
-cd <worktree-path> && claude /resume-ticket
-```
+This ensures all subsequent git operations happen in the correct branch.
 
-### 7. Confirm to User
+### 7. Display Task Summary
 
-Display:
+Show the ticket details you already retrieved in step 4:
 
 ```
-Worktree created and new Claude session started.
+✓ Worktree ready: <worktree-path>
+✓ Branch: ticket/<short-id>
 
-Ticket: <title>
-Branch: ticket/<short-id>
-Path: <worktree-path>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-The new Claude instance is loading the ticket context now.
-You can close this terminal or continue working here.
+Ticket: <short-id>
+Title: <ticket title>
+
+Task: <summarize the main task in 2-3 sentences>
+
+Key Requirements:
+- <bullet points from description/clarification>
+
+Constraints:
+- <any important constraints from the clarification thread>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+### 8. Enter Plan Mode
+
+You now have full context for the ticket. Immediately enter plan mode using the EnterPlanMode tool to design the implementation approach.
+
+In plan mode:
+1. Explore the codebase to understand relevant areas
+2. Identify which files need to be created or modified
+3. Design the implementation approach
+4. Write a clear plan for user approval
+
+Do NOT wait for user instructions - you have everything you need. Enter plan mode and start planning immediately.
 
 ## Notes
 
 - Only call `get_ticket` after user approval - that's what locks the ticket
-- The new Claude instance will auto-run `/resume-ticket` to load context
-- If the terminal script fails, provide manual instructions
+- The worktree is created in `../<repo-name>-worktrees/ticket-<short-id>/`
+- All file paths should use the worktree path, not the main repo
+- After plan approval, implement the feature in the worktree
