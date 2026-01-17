@@ -1,0 +1,21 @@
+{
+  "name": "aintentfirst-marketplace",
+  "description": "AI Intent First plugins for Claude Code",
+  "owner": {
+    "name": "Yvo Cilon",
+    "email": "yvo.cilon@appcore.nl"
+  },
+  "plugins": [
+    {
+      "name": "aintentfirst",
+      "description": "AI Intent First integration - ticket workflow for Claude Code",
+      "version": "1.0.0",
+      "author": {
+        "name": "Yvo Cilon",
+        "email": "yvo.cilon@appcore.nl"
+      },
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}
