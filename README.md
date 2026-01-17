@@ -17,6 +17,15 @@ Connect the current repository to an AI Intent First project.
 1. Configures the MCP server (prompts for API token if needed)
 2. Lists available projects
 3. Saves the project mapping for this repository
+4. **Offers to generate project documentation** (if none exists)
+
+When generating docs, Claude analyzes your codebase and creates:
+- `TERMINOLOGY.md` - Project-specific terms and concepts
+- `SCREENS.md` - UI screens and pages
+- `USER_FLOWS.md` - Key user journeys
+- `BUSINESS_RULES.md` - Domain constraints and rules
+
+These docs help the LLM ask better clarifying questions when stakeholders create tickets.
 
 ```bash
 # In your project directory
@@ -50,6 +59,22 @@ Resume work on a ticket (auto-runs in new worktrees).
 # In a ticket worktree
 claude
 > /resume-ticket
+```
+
+### `/sync-docs`
+
+Update project documentation after making codebase changes.
+
+1. Checks existing docs in AI Intent First
+2. Re-analyzes the codebase for changes
+3. Updates existing docs with new content
+4. Offers to create any missing standard docs
+
+Run this after adding new features, screens, or business rules.
+
+```bash
+claude
+> /sync-docs
 ```
 
 ## How It Works
@@ -90,11 +115,13 @@ On macOS, `/pick-ticket` opens a new terminal tab (iTerm2 or Terminal.app) with 
 ## Workflow
 
 1. Run `/init` once per repository to connect it to your AI Intent First project
-2. Run `/pick-ticket` to grab a ticket and start working
-3. New Claude instance automatically loads ticket context
-4. Implement the feature
-5. Commit, push, and create PR
-6. Use `complete_ticket` MCP tool to mark done
+2. Generate initial docs when prompted (or run `/sync-docs` later)
+3. Run `/pick-ticket` to grab a ticket and start working
+4. New Claude instance automatically loads ticket context
+5. Implement the feature
+6. Commit, push, and create PR
+7. Use `complete_ticket` MCP tool to mark done
+8. Run `/sync-docs` if you added new features, screens, or terminology
 
 ## License
 

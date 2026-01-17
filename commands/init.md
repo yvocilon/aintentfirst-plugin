@@ -86,7 +86,75 @@ Then write the JSON file with this structure:
 
 Save to: `$CONFIG_DIR/.aintentfirst.json`
 
-### 7. Confirm
+### 7. Check for Existing Project Docs
+
+Call the MCP tool to list existing documentation:
+
+```
+mcp__aintentfirst__list_project_docs with projectId
+```
+
+If docs already exist, skip to step 11 (Confirm).
+
+### 8. Offer to Generate Docs
+
+If no docs exist, ask the user:
+
+> **No project documentation found.**
+>
+> I can analyze this codebase and generate functional documentation to help the LLM ask better clarifying questions on tickets.
+>
+> This will create:
+> - `TERMINOLOGY.md` - Project-specific terms and concepts
+> - `SCREENS.md` - UI screens and pages
+> - `USER_FLOWS.md` - Key user journeys
+> - `BUSINESS_RULES.md` - Domain constraints and rules
+>
+> **Generate documentation now?**
+> - **Yes** - Analyze codebase and upload docs
+> - **No** - Skip for now (you can run `/sync-docs` later)
+
+If "No", skip to step 11 (Confirm).
+
+### 9. Analyze Codebase
+
+Use the Explore agent to analyze the codebase for functional aspects:
+
+1. **Terminology**: Look for domain-specific terms in code comments, variable names, type definitions, and documentation files. Focus on business concepts, not technical terms.
+
+2. **Screens**: Find React components that represent pages/screens. Look in routes, pages, or views directories. Note the purpose of each screen.
+
+3. **User Flows**: Trace how users accomplish key tasks. Look at route structures, form submissions, and state transitions.
+
+4. **Business Rules**: Find validation logic, permission checks, status transitions, and constraints in the code.
+
+Focus on **functional aspects visible to stakeholders**, not technical implementation details. Skip:
+- Tech stack details
+- API endpoint implementations
+- Database schema specifics
+- Code patterns and architecture
+
+### 10. Upload Documentation
+
+For each doc type that has meaningful content, create a project document:
+
+```
+mcp__aintentfirst__create_project_doc with:
+  - projectId: <selected-project-uuid>
+  - name: "TERMINOLOGY.md" (or SCREENS.md, USER_FLOWS.md, BUSINESS_RULES.md)
+  - content: <generated markdown content>
+```
+
+Show progress as each doc is uploaded:
+
+```
+Uploading TERMINOLOGY.md... ✓
+Uploading SCREENS.md... ✓
+Uploading USER_FLOWS.md... ✓
+Uploading BUSINESS_RULES.md... ✓
+```
+
+### 11. Confirm
 
 Display confirmation:
 
@@ -94,8 +162,21 @@ Display confirmation:
 Connected to AI Intent First project: <project-name>
 
 You can now use:
-  /pick-ticket  - Pick up a todo ticket and create a worktree
+  /pick-ticket   - Pick up a todo ticket and create a worktree
   /resume-ticket - Resume work on the current ticket
+  /sync-docs     - Update project documentation
+```
+
+If docs were generated, also show:
+
+```
+Project documentation uploaded:
+  - TERMINOLOGY.md
+  - SCREENS.md
+  - USER_FLOWS.md
+  - BUSINESS_RULES.md
+
+The LLM will use these docs when asking clarifying questions on new tickets.
 ```
 
 ## Notes
@@ -103,3 +184,4 @@ You can now use:
 - The config is stored per-repo in `~/.claude/projects/<encoded-path>/`
 - The MCP scope is `local` so it only applies to this project
 - Re-running `/init` allows changing the connected project
+- Use `/sync-docs` to update documentation after making changes to the codebase
