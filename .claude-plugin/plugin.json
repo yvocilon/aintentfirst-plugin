@@ -1,0 +1,10 @@
+{
+  "name": "aintentfirst",
+  "version": "1.0.0",
+  "description": "AI Intent First integration - ticket workflow for Claude Code",
+  "author": {
+    "name": "Yvo Cilon",
+    "email": "yvo.cilon@appcore.nl"
+  },
+  "repository": "github:yvocilon/aintentfirst-plugin"
+}
