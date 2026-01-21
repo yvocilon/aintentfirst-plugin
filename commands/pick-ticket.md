@@ -75,16 +75,19 @@ This auto-moves the ticket to "in_progress", locking it from other Claude instan
 
 Display the full ticket details including any project documentation.
 
-### 5. Create Worktree
+### 5. Create Worktree (or use existing)
 
-Get the plugin directory and run the worktree script:
+First check if the worktree already exists:
 
 ```bash
-# Find the plugin scripts directory
-PLUGIN_DIR="$(dirname "$(dirname "$0")")"  # Relative to command file
+WORKTREE_PATH="../$(basename $(pwd))-worktrees/ticket-<short-id>"
+test -d "$WORKTREE_PATH" && echo "exists" || echo "create"
+```
 
-# Or use absolute path if installed
-~/.claude/plugins/repos/aintentfirst/scripts/worktree-new.sh "<ticket-id>"
+**If worktree doesn't exist:** Run the worktree script:
+
+```bash
+~/.claude/scripts/worktree-new.sh "<ticket-id>"
 ```
 
 The script will:
@@ -94,6 +97,10 @@ The script will:
 - Install dependencies (auto-detects pnpm/npm/yarn/bun)
 
 Capture the `WORKTREE_PATH` from the script output.
+
+**If worktree already exists:** Just use the existing path. Still continue with ALL remaining steps.
+
+**CRITICAL:** Whether the worktree is new or existing, you MUST continue to Steps 5.5, 6, 7, and 8. Do NOT stop early just because the worktree exists.
 
 ### 5.5. Save Ticket Context to TICKET.md
 
