@@ -84,7 +84,38 @@ This returns:
 - Clarification Q&A thread
 - Project documentation
 
-### 6. Display Task Summary
+### 6. Save or Update TICKET.md
+
+Check if `TICKET.md` exists in the current directory:
+
+```bash
+test -f TICKET.md && echo "exists" || echo "missing"
+```
+
+If missing, write it using the ticket details from step 5:
+
+```markdown
+# Ticket: <short-id>
+
+## Title
+<ticket title>
+
+## Description
+<full description from get_ticket response>
+
+## Requirements
+- <extract key requirements as bullet points from description and clarification>
+
+## Constraints
+- <extract constraints from clarification Q&A thread>
+
+## Project Context
+<include relevant project documentation returned by get_ticket>
+```
+
+This file is required for the automated workflow.
+
+### 7. Display Task Summary and Prompt for Next Steps
 
 Show a clear summary:
 
@@ -101,19 +132,21 @@ Key Requirements:
 
 Constraints:
 - <any important constraints from the clarification thread>
+
+TICKET.md: <"Found" or "Created">
 ```
 
-### 7. Enter Plan Mode
+Then ask the user what they want to do next:
 
-You now have full context for the ticket. Immediately enter plan mode using the EnterPlanMode tool to design the implementation approach.
+> **How would you like to proceed?**
+>
+> - **Plan** - Run `/workflows:plan` to create/update the implementation plan
+> - **Work** - Run `/workflows:work` to continue implementing (if plan already approved)
+> - **Manual** - Enter plan mode for manual implementation
 
-In plan mode:
-1. Explore the codebase to understand relevant areas
-2. Identify which files need to be created or modified
-3. Design the implementation approach
-4. Write a clear plan for user approval
-
-Do NOT wait for user instructions - you have everything you need. Enter plan mode and start planning immediately.
+If the user chooses "Plan", run `/workflows:plan` with `@TICKET.md` as context.
+If the user chooses "Work", run `/workflows:work` to continue implementation.
+If the user chooses "Manual", enter plan mode using the EnterPlanMode tool.
 
 ## Example Output
 

@@ -1,0 +1,16 @@
+@TICKET.md
+
+You are implementing this ticket. Follow these steps:
+
+1. Run /workflows:plan to create a detailed implementation plan based on the ticket
+2. Show me the plan and WAIT for my approval before proceeding
+3. After I approve, run /workflows:work to implement the changes
+4. Commit all changes with descriptive messages
+5. Push the branch to remote
+6. Create a PR using 'gh pr create' with:
+   - Title matching the ticket
+   - Summary of changes
+   - Link to ticket ID in description
+7. Return the PR URL when complete
+
+Start by running /workflows:plan now.

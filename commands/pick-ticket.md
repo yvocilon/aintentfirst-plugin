@@ -95,6 +95,31 @@ The script will:
 
 Capture the `WORKTREE_PATH` from the script output.
 
+### 5.5. Save Ticket Context to TICKET.md
+
+Write the full ticket details to `TICKET.md` in the worktree root for the automated workflow:
+
+```markdown
+# Ticket: <short-id>
+
+## Title
+<ticket title>
+
+## Description
+<full description from get_ticket response>
+
+## Requirements
+- <extract key requirements as bullet points from description and clarification>
+
+## Constraints
+- <extract constraints from clarification Q&A thread>
+
+## Project Context
+<include relevant project documentation returned by get_ticket>
+```
+
+Write this file to `<worktree-path>/TICKET.md`. This provides context for the automated planning step.
+
 ### 6. Change to Worktree Directory
 
 Change your working directory to the worktree:
@@ -129,17 +154,34 @@ Constraints:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### 8. Enter Plan Mode
+### 8. Launch Automated Docker Sandbox
 
-You now have full context for the ticket. Immediately enter plan mode using the EnterPlanMode tool to design the implementation approach.
+Launch a Docker sandbox with an automated prompt that will:
+1. Run `/workflows:plan` to create an implementation plan
+2. Wait for user approval
+3. Implement, commit, push, and create a PR
 
-In plan mode:
-1. Explore the codebase to understand relevant areas
-2. Identify which files need to be created or modified
-3. Design the implementation approach
-4. Write a clear plan for user approval
+Tell the user:
 
-Do NOT wait for user instructions - you have everything you need. Enter plan mode and start planning immediately.
+> ✓ Ready to launch automated workflow
+>
+> A Docker sandbox will open with full access to the worktree.
+> Claude will automatically:
+> 1. Plan the implementation using `/workflows:plan`
+> 2. Show you the plan for approval
+> 3. After your approval: implement, commit, push, and create a PR
+>
+> Opening sandbox now...
+
+Then run the open-worktree script which will launch the Docker sandbox:
+
+```bash
+~/.claude/plugins/repos/aintentfirst-plugin/scripts/open-worktree.sh "<worktree-path>"
+```
+
+The script opens a new terminal with the Docker sandbox pre-configured with the automated prompt.
+
+**Do NOT enter plan mode yourself** - the Docker sandbox handles the entire workflow.
 
 ## Notes
 
